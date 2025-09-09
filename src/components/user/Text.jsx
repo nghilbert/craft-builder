@@ -1,82 +1,39 @@
 // components/user/Text.js
-export const Text = ({ text, fontSize }) => {
+import React from 'react';
+import { useNode } from '@craftjs/core';
+
+export const Text = ({ text = 'Edit me', fontSize = 16 }) => {
   const {
     connectors: { connect, drag },
-    isActive,
-    actions: { setProp },
-  } = useNode((node) => ({
-    isActive: node.events.selected,
-  }));
-
-  const [editable, setEditable] = useState(false);
-  useEffect(() => {
-    !hasSelectedNode && setEditable(false);
-  }, [hasSelectedNode]);
+    setProp,
+  } = useNode();
 
   return (
-    <div ref={(ref) => connect(drag(ref))}>
-      <ContentEditable
-        html={text}
-        onChange={(e) =>
-          setProp((props) => (props.text = e.target.value.replace(/<\/?[^>]+(>|$)/g, '')))
-        }
-        tagName="p"
-        style={{ fontSize: `${fontSize}px`, textAlign }}
-      />
-      {hasSelectedNode && (
-        <FormControl className="text-additional-settings" size="small">
-          <FormLabel component="legend">Font size</FormLabel>
-          <Slider
-            defaultValue={fontSize}
-            step={1}
-            min={7}
-            max={50}
-            valueLabelDisplay="auto"
-            onChange={(_, value) => {
-              setProp((props) => (props.fontSize = value));
-            }}
-          />
-        </FormControl>
-      )}
-    </div>
-  );
-};
-
-const TextSettings = () => {
-  const {
-    actions: { setProp },
-    fontSize,
-  } = useNode((node) => ({
-    fontSize: node.data.props.fontSize,
-  }));
-
-  return (
-    <>
-      <FormControl size="small" component="fieldset">
-        <FormLabel component="legend">Font size</FormLabel>
-        <Slider
-          value={fontSize || 7}
-          step={7}
-          min={1}
-          max={50}
-          onChange={(_, value) => {
-            setProp((props) => (props.fontSize = value));
-          }}
-        />
-      </FormControl>
-    </>
+    <span
+      ref={(dom) => connect(drag(dom))}
+      contentEditable
+      suppressContentEditableWarning
+      style={{ fontSize }}
+      onInput={(e) => {
+        const value = e.currentTarget.innerText;
+        // Debounce updates a bit to avoid excessive state churn
+        setProp((props) => {
+          props.text = value;
+        }, 500);
+      }}
+    >
+      {text}
+    </span>
   );
 };
 
 Text.craft = {
-  props: {
-    text: 'Hi',
-    fontSize: 20,
-  },
+  props: { text: 'Edit me', fontSize: 16 },
   rules: {
-    canDrag: (node) => node.data.props.text != 'Drag',
+    canDrop: () => true,
+    canDrag: () => true,
+    canMoveIn: () => true,
+    canMoveOut: () => true,
   },
-  related: {
-    settings: TextSettings,
-  },
+  related: {},
 };
