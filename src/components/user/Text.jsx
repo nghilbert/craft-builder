@@ -1,26 +1,20 @@
 // components/user/Text.js
-import React, { useCallback } from 'react';
-import ContentEditable from 'react-contenteditable';
-
 export const Text = ({ text, fontSize }) => {
   const {
     connectors: { connect, drag },
-    hasSelectedNode,
-    hasDraggedNode,
+    isActive,
     actions: { setProp },
-  } = useNode((state) => ({
-    hasSelectedNode: state.events.selected,
-    hasDraggedNode: state.events.dragged,
+  } = useNode((node) => ({
+    isActive: node.events.selected,
   }));
 
   const [editable, setEditable] = useState(false);
-
   useEffect(() => {
     !hasSelectedNode && setEditable(false);
   }, [hasSelectedNode]);
 
   return (
-    <div ref={(ref) => connect(drag(ref))} onClick={(e) => setEditable(true)}>
+    <div ref={(ref) => connect(drag(ref))}>
       <ContentEditable
         html={text}
         onChange={(e) =>
@@ -46,4 +40,43 @@ export const Text = ({ text, fontSize }) => {
       )}
     </div>
   );
+};
+
+const TextSettings = () => {
+  const {
+    actions: { setProp },
+    fontSize,
+  } = useNode((node) => ({
+    fontSize: node.data.props.fontSize,
+  }));
+
+  return (
+    <>
+      <FormControl size="small" component="fieldset">
+        <FormLabel component="legend">Font size</FormLabel>
+        <Slider
+          value={fontSize || 7}
+          step={7}
+          min={1}
+          max={50}
+          onChange={(_, value) => {
+            setProp((props) => (props.fontSize = value));
+          }}
+        />
+      </FormControl>
+    </>
+  );
+};
+
+Text.craft = {
+  props: {
+    text: 'Hi',
+    fontSize: 20,
+  },
+  rules: {
+    canDrag: (node) => node.data.props.text != 'Drag',
+  },
+  related: {
+    settings: TextSettings,
+  },
 };
