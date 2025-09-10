@@ -1,11 +1,11 @@
-// components/Toolbox.js
+// components/Toolbox.jsx
 import React from 'react';
 import { Box, Typography, Grid, Button as MaterialButton } from '@mui/material';
 
 export const Toolbox = () => {
   return (
     <Box px={2} py={2}>
-      <Grid container direction="column" alignItems="center" justify="center" spacing={1}>
+      <Grid container direction="column" alignItems="center" justifyContent="center" spacing={1}>
         <Box pb={2}>
           <Typography>Drag to add</Typography>
         </Box>
@@ -17,6 +17,9 @@ export const Toolbox = () => {
         </Grid>
         <Grid container direction="column" item>
           <MaterialButton variant="contained">Container</MaterialButton>
+        </Grid>
+        <Grid container direction="column" item>
+          <MaterialButton variant="contained">Card</MaterialButton>
         </Grid>
       </Grid>
     </Box>

@@ -1,45 +1,43 @@
-// src/App.jsx
+// pages/App.jsx
 import React from 'react';
-import { Typography, Paper, GridLegacy as Grid } from '@mui/material';
-import { Editor, Frame, Element } from '@craftjs/core';
+import { Typography, Paper, Grid } from '@mui/material';
 
 import { Toolbox } from './components/Toolbox';
 import { SettingsPanel } from './components/SettingsPanel';
-import { Topbar } from './components/Topbar';
 
 import { Container } from './components/user/Container';
 import { Button } from './components/user/Button';
+import { Card, CardTop, CardBottom } from './components/user/Card';
 import { Text } from './components/user/Text';
+
+import { Editor, Frame, Element } from '@craftjs/core';
 
 export default function App() {
   return (
-    <div style={{ margin: '0 auto', width: 800 }}>
+    <div>
       <Typography variant="h5" align="center">
         A super simple page editor
       </Typography>
-
-      <Topbar />
-
-      <Editor resolver={{ Button, Text, Container }}>
+      <Editor resolver={{ Card, Button, Container, Text, CardTop, CardBottom }}>
         <Grid container spacing={3}>
           <Grid item xs>
             <Frame>
-              - style={}
-              <Element
-                is={Container}
-                style={{
-                  background: '#ffffff',
-                  width: '1024px',
-                  height: '576px',
-                  border: '1px dotted #000000',
-                }}
-                canvas
-              />
+              <Element is={Container} padding={5} background="#eee" canvas>
+                <Card />
+                <Button size="small" variant="outlined">
+                  Click
+                </Button>
+                <Text text="Hi world!" />
+                <Element is={Container} padding={2} background="#999" canvas>
+                  {' '}
+                  // Canvas Node of type Container, droppable and draggable
+                  <Text text="It's me again!" /> // Node of type Text, draggable
+                </Element>
+              </Element>
             </Frame>
           </Grid>
-
           <Grid item xs={3}>
-            <Paper sx={{ p: 2 }}>
+            <Paper>
               <Toolbox />
               <SettingsPanel />
             </Paper>

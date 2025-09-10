@@ -1,39 +1,73 @@
-// components/user/Text.js
+// components/user/Text.jsx
 import React from 'react';
+import { Typography } from '@mui/material';
 import { useNode } from '@craftjs/core';
 
-export const Text = ({ text = 'Edit me', fontSize = 16 }) => {
+export const Text = ({ fontSize, text }) => {
+  // Connectors connect the editor to the DOM
   const {
     connectors: { connect, drag },
-    setProp,
-  } = useNode();
+    hasSelectedNode,
+    hasDraggedNode,
+    actions: { setProp },
+  } = useNode((state) => ({
+    hasSelectedNode: state.events.selected,
+    hasDraggedNode: state.events.dragged,
+  }));
+
+  const [editable, setEditable] = useState(false);
+  useEffect(() => {
+    !hasSelectedNode && setEditable(false);
+  }, [hasSelectedNode]);
 
   return (
-    <span
-      ref={(dom) => connect(drag(dom))}
-      contentEditable
-      suppressContentEditableWarning
-      style={{ fontSize }}
-      onInput={(e) => {
-        const value = e.currentTarget.innerText;
-        // Debounce updates a bit to avoid excessive state churn
-        setProp((props) => {
-          props.text = value;
-        }, 500);
-      }}
-    >
-      {text}
-    </span>
+    <div ref={(ref) => connect(drag(ref))} onClick={(e) => setEditable(true)}>
+      <ContentEditable
+        html={text}
+        onChange={(e) =>
+          setProp((props) => (props.text = e.target.value.replace(/<\/?[^>]+(>|$)/g, '')))
+        }
+        tagName="p"
+        style={{ fontSize: `${fontSize}px`, textAlign }}
+      />
+    </div>
+  );
+};
+
+const TextSettings = () => {
+  const {
+    actions: { setProp },
+    fontSize,
+  } = useNode((node) => ({
+    fontSize: node.data.props.fontSize,
+  }));
+
+  return (
+    <>
+      <FormControl size="small" component="fieldset">
+        <FormLabel component="legend">Font size</FormLabel>
+        <Slider
+          value={fontSize || 7}
+          step={7}
+          min={1}
+          max={50}
+          onChange={(_, value) => {
+            setProp((props) => (props.fontSize = value));
+          }}
+        />
+      </FormControl>
+    </>
   );
 };
 
 Text.craft = {
-  props: { text: 'Edit me', fontSize: 16 },
-  rules: {
-    canDrop: () => true,
-    canDrag: () => true,
-    canMoveIn: () => true,
-    canMoveOut: () => true,
+  props: {
+    text: 'Hello world',
   },
-  related: {},
+  rules: {
+    canDrag: true,
+  },
+  related: {
+    settings: TextSettings,
+  },
 };

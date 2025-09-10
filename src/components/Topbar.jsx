@@ -1,4 +1,4 @@
-// components/Topbar.js
+// components/Topbar.jsx
 import React from 'react';
 import { Box, FormControlLabel, Switch, Grid, Button as MaterialButton } from '@mui/material';
 
