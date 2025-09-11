@@ -1,27 +1,18 @@
-// components/SettingsPanel.jsx
-import { Box, Chip, Grid, Typography, Button as MaterialButton } from '@mui/material';
-import { useEditor } from '@craftjs/core';
-
+// components/SettingsPanel.js
+import React from 'react';
+import {
+  Box,
+  Chip,
+  Grid,
+  Typography,
+  Button as MaterialButton,
+  FormControl,
+  FormLabel,
+  Slider,
+} from '@mui/material';
+import { PropsEditor } from './PropsEditor';
 export const SettingsPanel = () => {
-  const { selected } = useEditor((state) => {
-    const [currentNodeId] = state.events.selected;
-    let selected;
-
-    if (currentNodeId) {
-      selected = {
-        id: currentNodeId,
-        name: state.nodes[currentNodeId].data.name,
-        settings: state.nodes[currentNodeId].related && state.nodes[currentNodeId].related.settings,
-        isDeletable: query.node(currentNodeId).isDeletable(),
-      };
-    }
-
-    return {
-      selected,
-    };
-  });
-
-  return selected ? (
+  return (
     <Box bgcolor="rgba(0, 0, 0, 0.06)" mt={2} px={2} py={2}>
       <Grid container direction="column" spacing={0}>
         <Grid item>
@@ -31,27 +22,19 @@ export const SettingsPanel = () => {
                 <Typography variant="subtitle1">Selected</Typography>
               </Grid>
               <Grid item>
-                <Chip size="small" color="primary" label={selected.name} />
+                <Chip size="small" color="primary" label="Selected" />
               </Grid>
             </Grid>
           </Box>
         </Grid>
-        {selected.settings && React.createElement(selected.settings)}
-        <MaterialButton variant="contained" color="default">
-          Delete
-        </MaterialButton>
-        {selected.isDeletable ? (
-          <MaterialButton
-            variant="contained"
-            color="default"
-            onClick={() => {
-              actions.delete(selected.id);
-            }}
-          >
-            Delete
-          </MaterialButton>
-        ) : null}
+        <FormControl size="small" component="fieldset">
+          <FormLabel component="legend">Properties</FormLabel>
+          <Box bgcolor="rgba(0, 0, 0, 0.06)" mt={2} px={2} py={2}>
+            <PropsEditor />
+          </Box>
+        </FormControl>
+        <MaterialButton variant="contained">Delete</MaterialButton>
       </Grid>
     </Box>
-  ) : null;
+  );
 };

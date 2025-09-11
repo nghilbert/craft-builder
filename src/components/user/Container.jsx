@@ -3,50 +3,29 @@ import React from 'react';
 import { Paper } from '@mui/material';
 import { useNode } from '@craftjs/core';
 
-export const Container = ({ background, padding = 0, children }) => {
+export const Container = ({ children, style = {} }) => {
   const {
     connectors: { connect, drag },
   } = useNode();
+
   return (
-    <Paper ref={(ref) => connect(drag(ref))} style={{ background, padding: `${padding}px` }}>
+    <Paper ref={(ref) => connect(drag(ref))} style={style}>
       {children}
     </Paper>
   );
 };
 
-export const ContainerSettings = () => {
-  const {
-    background,
-    padding,
-    actions: { setProp },
-  } = useNode((node) => ({
-    background: node.data.props.background,
-    padding: node.data.props.padding,
-  }));
-  return (
-    <div>
-      <FormControl fullWidth={true} margin="normal" component="fieldset">
-        <FormLabel component="legend">Background</FormLabel>
-        <HexColorPicker
-          color={background || '#000'}
-          onChange={(color) => {
-            setProp((props) => (props.background = color));
-          }}
-        />
-      </FormControl>
-      <FormControl fullWidth={true} margin="normal" component="fieldset">
-        <FormLabel component="legend">Padding</FormLabel>
-        <Slider
-          defaultValue={padding}
-          onChange={(_, value) => setProp((props) => (props.padding = value))}
-        />
-      </FormControl>
-    </div>
-  );
-};
-
 Container.craft = {
-  related: {
-    settings: ContainerSettings,
+  displayName: 'Container',
+  props: {
+    style: {
+      background: '#eee',
+      height: '576px',
+      width: '1024px',
+    },
+  },
+  rules: {
+    canDrag: () => true,
+    canMoveIn: () => true, // allow dropping anything inside
   },
 };
