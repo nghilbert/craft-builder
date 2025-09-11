@@ -28,7 +28,6 @@ export const SettingsPanel = () => {
           </Box>
         </Grid>
         <FormControl size="small" component="fieldset">
-          <FormLabel component="legend">Properties</FormLabel>
           <Box bgcolor="rgba(0, 0, 0, 0.06)" mt={2} px={2} py={2}>
             <PropsEditor />
           </Box>
